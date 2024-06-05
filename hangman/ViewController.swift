@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate {
+class ViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, XMLParserDelegate{
     
     @IBOutlet weak var hangmanImgLabel: UIImageView!
     var wrongGuess = 0
@@ -16,13 +16,20 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     let alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
     var counter = 0
     let lives = 10
+    var selectedLanguage: String?
     @IBOutlet weak var leftGuessLabel: UILabel!
+    
+    var parser: XMLParser!
+    var currentElement: String = ""
+    var currentLanguage: String = ""
+    var currentAlphabet: String = ""
+    var words: [String] = []
+    //var alphabet: [Character] = []
+    
     
     var isGameFinished: Bool = false
     
     @IBOutlet weak var collectionView: UICollectionView!
-    
-    let words = ["Test", "Campaing", "Match", "Love", "Mine"]
     
     var guessedLetters: [Character] = []
     
@@ -34,6 +41,15 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         
         setLayout()
         
+        if let path = Bundle.main.path(forResource: "words", ofType: "xml") {
+            if let xmlParser = XMLParser(contentsOf: URL(fileURLWithPath: path)) {
+                parser = xmlParser
+                parser.delegate = self
+                parser.parse()
+            }
+        }
+        
+        print(words.count)
         startGame()
     }
     
@@ -61,6 +77,26 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         ])
     }
     
+    
+    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
+        currentElement = elementName
+    }
+    
+    func parser(_ parser: XMLParser, foundCharacters string: String) {
+        if currentElement == "word" {
+            words.append(string.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+        }
+        
+    }
+    
+    func parserDidEndDocument(_ parser: XMLParser) {
+        // Verileri başarıyla işleyin
+        words = words.filter{
+            !$0.isEmpty
+        }
+        print(words)
+        print(alphabet)
+    }
     
     
     
@@ -91,6 +127,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
             cell.button.layer.cornerRadius = 20
         }
         
+        print(selectedLanguage!)
         print(hiddenWord)
         print(selectedWord)
         
