@@ -9,41 +9,39 @@ import UIKit
 
 class ViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, XMLParserDelegate{
     
+    @IBOutlet weak var hiddenWordLabel: UILabel!
+    @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var leftGuessLabel: UILabel!
     @IBOutlet weak var hangmanImgLabel: UIImageView!
+    
+    
     var wrongGuess = 0
     var selectedWord = ""
     var hiddenWord = ""
     var alphabet = Array("")
-    var counter = 0
     let lives = 10
     var selectedLanguage: String?
-    @IBOutlet weak var leftGuessLabel: UILabel!
     var languages: [Language] = []
     var wordBuffer = ""
-    
-    
     var parser: XMLParser!
     var currentElement: String = ""
     var currentLanguage: String?
     var currentAlphabet: String?
     var words: [String] = []
-    //var alphabet: [Character] = []
-    
-    
     var isGameFinished: Bool = false
-    
-    @IBOutlet weak var collectionView: UICollectionView!
-    
     var guessedLetters: [Character] = []
     
-    @IBOutlet weak var hiddenWordLabel: UILabel!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
         setLayout()
-        
+        parseXML()
+        startGame()
+    }
+    
+    func parseXML(){
         if let path = Bundle.main.path(forResource: "words", ofType: "xml") {
             if let xmlParser = XMLParser(contentsOf: URL(fileURLWithPath: path)) {
                 parser = xmlParser
@@ -51,9 +49,6 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
                 parser.parse()
             }
         }
-        
-        print(words.count)
-        startGame()
     }
     
     func setLayout(){
@@ -125,26 +120,22 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
             !$0.isEmpty
         }
         
-        
         for language in languages {
             print("Language: \(language.name), Alphabet: \(language.alphabet)")
             if(language.name == selectedLanguage!){
                 alphabet = Array(language.alphabet)
             }
         }
-        
-        print(words)
-        print(alphabet)
     }
     
     
     @IBAction func backToMenu(_ sender: UIButton) {
-        performSegue(withIdentifier: "returnMainMenuSegue", sender: self)
+        returnToMainMenu()
     }
     
     
     @IBAction func restartGame(_ sender: UIButton) {
-        startGame()
+        resetGame()
     }
     
     func startGame(){
@@ -215,6 +206,56 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         layout.itemSize = CGSize(width: widthPerItem, height: widthPerItem)
     }
     
+    func endGame() {
+        showEndGameAlert()
+    }
+    
+    func showEndGameAlert() {
+        let alert = UIAlertController(title: "Game Over", message: "Screet Word: \(selectedWord)\nWhat would you do?", preferredStyle: .alert)
+        
+        let replayAction = UIAlertAction(title: "Play Again", style: .default) { _ in
+            self.resetGame()
+        }
+        
+        let mainMenuAction = UIAlertAction(title: "Go to Home", style: .cancel) { _ in
+            self.returnToMainMenu()
+        }
+        
+        alert.addAction(replayAction)
+        alert.addAction(mainMenuAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func showWonAlert() {
+        let alert = UIAlertController(title: "You Won", message: "What would you do?", preferredStyle: .alert)
+        
+        let replayAction = UIAlertAction(title: "Play Again", style: .default) { _ in
+            self.resetGame()
+        }
+        
+        let mainMenuAction = UIAlertAction(title: "Go to Home", style: .cancel) { _ in
+            self.returnToMainMenu()
+        }
+        
+        alert.addAction(replayAction)
+        alert.addAction(mainMenuAction)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func wonGame(){
+        showWonAlert()
+    }
+    
+    func resetGame(){
+        startGame()
+    }
+    
+    func returnToMainMenu(){
+        performSegue(withIdentifier: "returnMainMenuSegue", sender: self)
+    }
+    
     
     @objc func letterButtonTapped(_ sender: UIButton) {
         
@@ -251,15 +292,11 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
                 wrongGuess = wrongGuess + 1
             }
             
-            
-            
             //print(wrongGuess)
             hangmanImgLabel.image = UIImage(named: "hangman\(wrongGuess)")
             hiddenWordLabel.text = hiddenWord
             leftGuessLabel.text = String(lives-wrongGuess)
             
-            
-            // Harf düğmesini pasif hale getirme
             sender.isEnabled = false
             
             UIView.animate(withDuration: 0.54) {
@@ -271,12 +308,13 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         let hiddenWordWithoutSpaces = hiddenWord.replacingOccurrences(of: " ", with: "")
         
         if selectedWord.uppercased() == hiddenWordWithoutSpaces {
-            print(true)
             isGameFinished = true
+            wonGame()
         }
         
         if(wrongGuess == 10){
             isGameFinished = true
+            endGame()
         }
         
     }
