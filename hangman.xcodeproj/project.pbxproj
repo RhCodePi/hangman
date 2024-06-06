@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		322FE6372C11B37F005EEB83 /* Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = 322FE6362C11B37F005EEB83 /* Language.swift */; };
 		323A679A2C09F6C6001BADB7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 323A67992C09F6C6001BADB7 /* AppDelegate.swift */; };
 		323A679C2C09F6C6001BADB7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 323A679B2C09F6C6001BADB7 /* SceneDelegate.swift */; };
 		323A679E2C09F6C6001BADB7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 323A679D2C09F6C6001BADB7 /* ViewController.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		322FE6362C11B37F005EEB83 /* Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Language.swift; sourceTree = "<group>"; };
 		323A67962C09F6C6001BADB7 /* hangman.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = hangman.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		323A67992C09F6C6001BADB7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		323A679B2C09F6C6001BADB7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 				323A67A72C09F6C8001BADB7 /* Info.plist */,
 				323A67B12C0A1649001BADB7 /* AlphabetCell.swift */,
 				329A76CB2C10BB8E009E6C95 /* words.xml */,
+				322FE6362C11B37F005EEB83 /* Language.swift */,
 			);
 			path = hangman;
 			sourceTree = "<group>";
@@ -151,6 +154,7 @@
 				323A679E2C09F6C6001BADB7 /* ViewController.swift in Sources */,
 				329A76CA2C10ADAF009E6C95 /* MainMenuViewController.swift in Sources */,
 				323A679A2C09F6C6001BADB7 /* AppDelegate.swift in Sources */,
+				322FE6372C11B37F005EEB83 /* Language.swift in Sources */,
 				323A67B22C0A1649001BADB7 /* AlphabetCell.swift in Sources */,
 				323A679C2C09F6C6001BADB7 /* SceneDelegate.swift in Sources */,
 			);

@@ -10,8 +10,8 @@ import UIKit
 class MainMenuViewController: UIViewController, UIPickerViewDelegate, UIPickerViewDataSource {
     
     
-    let languages = ["English", "Spanish", "French", "German"]
-    var selectedLanguage: String = "English"
+    let languages = ["Türkçe","English", "Spanish", "French", "German"]
+    var selectedLanguage: String = "Türkçe"
     
     
     override func viewDidLoad() {
@@ -20,6 +20,7 @@ class MainMenuViewController: UIViewController, UIPickerViewDelegate, UIPickerVi
         // Do any additional setup after loading the view.
         languagePicker.delegate = self
         languagePicker.dataSource = self
+        
     }
     
     @IBAction func playGameButton(_ sender: UIButton) {

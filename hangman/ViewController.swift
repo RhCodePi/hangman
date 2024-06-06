@@ -13,16 +13,19 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     var wrongGuess = 0
     var selectedWord = ""
     var hiddenWord = ""
-    let alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+    var alphabet = Array("")
     var counter = 0
     let lives = 10
     var selectedLanguage: String?
     @IBOutlet weak var leftGuessLabel: UILabel!
+    var languages: [Language] = []
+    var wordBuffer = ""
+    
     
     var parser: XMLParser!
     var currentElement: String = ""
-    var currentLanguage: String = ""
-    var currentAlphabet: String = ""
+    var currentLanguage: String?
+    var currentAlphabet: String?
     var words: [String] = []
     //var alphabet: [Character] = []
     
@@ -80,13 +83,40 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?, qualifiedName qName: String?, attributes attributeDict: [String : String] = [:]) {
         currentElement = elementName
+        if elementName == "language" {
+            currentLanguage = attributeDict["name"]
+        } else if elementName == "alphabet"{
+            currentAlphabet = ""
+        }
     }
     
     func parser(_ parser: XMLParser, foundCharacters string: String) {
-        if currentElement == "word" {
-            words.append(string.trimmingCharacters(in: .whitespacesAndNewlines).uppercased())
+        
+        
+        if currentElement == "word" && currentLanguage == selectedLanguage {
+            // Kelime tamponuna karakterleri ekle
+            wordBuffer += string.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         }
         
+        if currentAlphabet != nil  && currentElement != "word"{
+            currentAlphabet? += string.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+    }
+    func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?, qualifiedName qName: String?) {
+        if elementName == "language" {
+            if let name = currentLanguage, let alphabet = currentAlphabet {
+                let language = Language(name: name, alphabet: alphabet)
+                languages.append(language)
+            }
+            currentLanguage = nil
+            currentAlphabet = nil
+        }
+        if elementName == "word" && currentLanguage == selectedLanguage {
+            // Kelime tamponunu words dizisine ekle
+            words.append(wordBuffer)
+            // Kelime tamponunu sıfırla
+            wordBuffer = ""
+        }
     }
     
     func parserDidEndDocument(_ parser: XMLParser) {
@@ -94,11 +124,23 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         words = words.filter{
             !$0.isEmpty
         }
+        
+        
+        for language in languages {
+            print("Language: \(language.name), Alphabet: \(language.alphabet)")
+            if(language.name == selectedLanguage!){
+                alphabet = Array(language.alphabet)
+            }
+        }
+        
         print(words)
         print(alphabet)
     }
     
     
+    @IBAction func backToMenu(_ sender: UIButton) {
+        performSegue(withIdentifier: "returnMainMenuSegue", sender: self)
+    }
     
     
     @IBAction func restartGame(_ sender: UIButton) {
@@ -190,7 +232,6 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
             
             if(selectedWord.uppercased().contains(selectedLetter)){
                 isCorrect = true
-                
             }
             // Gizli kelimeyi güncelleme
             hiddenWord = ""
@@ -233,8 +274,6 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
             print(true)
             isGameFinished = true
         }
-        
-        
         
         if(wrongGuess == 10){
             isGameFinished = true
