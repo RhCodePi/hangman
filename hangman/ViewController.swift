@@ -30,6 +30,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     var words: [String] = []
     var isGameFinished: Bool = false
     var guessedLetters: [Character] = []
+    var points: Int = 0
     
     
     override func viewDidLoad() {
@@ -224,11 +225,13 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
         alert.addAction(replayAction)
         alert.addAction(mainMenuAction)
         
+        points = 0
+        
         self.present(alert, animated: true, completion: nil)
     }
     
     func showWonAlert() {
-        let alert = UIAlertController(title: "You Won", message: "What would you do?", preferredStyle: .alert)
+        let alert = UIAlertController(title: "You Won", message: "What would you do\n Your Points: \(points)", preferredStyle: .alert)
         
         let replayAction = UIAlertAction(title: "Play Again", style: .default) { _ in
             self.resetGame()
@@ -245,6 +248,7 @@ class ViewController: UIViewController, UICollectionViewDataSource, UICollection
     }
     
     func wonGame(){
+        points = points + Int(Int(leftGuessLabel.text!)!/2)
         showWonAlert()
     }
     
